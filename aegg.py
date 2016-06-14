@@ -28,7 +28,7 @@ class AEGG(object):
     def hunt(self, n=None, paths=None):
         """
         n: number paths want to check
-        paths: angr path object, TODO: an input instead of path
+        paths: angr path object
         """
         n = 1 if n is None else n
         paths = [] if paths is None else paths
@@ -39,8 +39,8 @@ class AEGG(object):
             found_paths = self.bug_finder.find()
             if found_paths is None:
                 break
-            l.info('Found: %s' % paths)
+            l.info('Found: %s' % found_paths)
             paths.extend(found_paths)
         for path in paths:
-            self.exploit_gen(paths)
+            self.exploit_gen(path)
         l.info('Completed.')
