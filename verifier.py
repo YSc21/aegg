@@ -8,5 +8,5 @@ class Verifier(object):
     def __init__(self, binary):
         self.binary = binary
 
-    def verify(self):
+    def verify(self, payload):
         pass
