@@ -9,4 +9,5 @@ class Verifier(object):
         self.binary = binary
 
     def verify(self, payload):
-        pass
+        # TODO
+        return True

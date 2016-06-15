@@ -19,13 +19,15 @@ class AEGG(object):
 
     def exploit_gen(self, path):
         analysis = self.analyzer.analyze(path)
-        payload = self.exploiter.generate(path, analysis)
-        if self.verifier.verify(payload):
-            self.payloads.append(payload)
-            return True
+        for payload in self.exploiter.generate(path, analysis):
+            if not payload:
+                break
+            if self.verifier.verify(payload):
+                self.payloads.append(payload)
+                return True
         return False
 
-    def hunt(self, n=None, paths=None):
+    def hack(self, n=None, paths=None):
         """
         n: number paths want to check
         paths: angr path object
@@ -33,13 +35,13 @@ class AEGG(object):
         n = 1 if n is None else n
         paths = [] if paths is None else paths
 
-        l.info('Start hunting ...')
+        l.info('Start hacking ...')
         while len(paths) < n:
             l.info('Bug finding ...')
             found_paths = self.bug_finder.find()
             if found_paths is None:
                 break
-            l.info('Found: %s' % found_paths)
+            l.info('Found path: %s' % found_paths)
             paths.extend(found_paths)
         for path in paths:
             self.exploit_gen(path)
