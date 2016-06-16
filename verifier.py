@@ -6,7 +6,7 @@ l = logging.getLogger("aegg.verifier")
 
 
 class Verifier(object):
-    TEST_CMDS = ['uname -a', 'id', 'whoami']
+    CMDS = ['uname -a', 'id', 'whoami']
 
     def __init__(self, binary):
         if '/' not in binary:
@@ -33,7 +33,10 @@ class Verifier(object):
         return False
 
     def verify(self, payload):
-        for cmd in Verifier.TEST_CMDS:
-            if self._verify(payload, cmd):
-                return True
+        for cmd in Verifier.CMDS:
+            try:
+                if self._verify(payload, cmd):
+                    return True
+            except Exception, e:
+                l.warning('Pwnlib Error: %s %s' % (Exception, e))
         return False

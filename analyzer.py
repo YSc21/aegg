@@ -1,4 +1,3 @@
-from error import *
 import logging
 
 l = logging.getLogger("aegg.analyzer")
@@ -39,6 +38,7 @@ class Analyzer(object):
         sym_addrs = []
         for var in stdin_file.variables():
             sym_addrs.extend(state.memory.addrs_for_name(var))
+        sym_addrs = sorted(sym_addrs)
 
         bufs = []
         for addr in sym_addrs:
