@@ -17,6 +17,10 @@ class AEGG(object):
         self.exploiter = Exploiter()
         self.verifier = Verifier(binary)
 
+    def _save(self, payload, file_name):
+        with open(file_name, 'w') as f:
+            f.write(payload)
+
     def exploit_gen(self, path):
         analysis = self.analyzer.analyze(path)
         for payload in self.exploiter.generate(path, analysis):
@@ -37,12 +41,18 @@ class AEGG(object):
 
         l.info('Start hacking ...')
         while len(paths) < n:
-            l.info('Bug finding ...')
             found_paths = self.bug_finder.find()
             if found_paths is None:
                 break
-            l.info('Found path: %s' % found_paths)
             paths.extend(found_paths)
         for path in paths:
             self.exploit_gen(path)
         l.info('Completed.')
+
+    def save(self, file_name=None):
+        file_name = self.binary if file_name is None else file_name
+        if len(self.payloads) == 1:
+            self._save(self.payloads[0], '%s.exp' % file_name)
+        else:
+            for i in xrange(len(self.payloads)):
+                self._save(self.payloads[i], '%s-%d.exp' % (file_name, i))

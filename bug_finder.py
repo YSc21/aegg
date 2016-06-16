@@ -23,10 +23,12 @@ class BugFinder(object):
 
     def find(self):
         """ return a list of paths """
+        l.info('Bug finding ...')
         self.pg.step(until=lambda pg: len(pg.unconstrained) > 0)
         if len(self.pg.unconstrained) > 0:
-            l.info('Found bug: %s' % self.pg)
+            l.info('... found bug: %s' % self.pg)
             paths = self.pg.unconstrained
+            l.info('... found paths: %s' % paths)
             self.pg.move('unconstrained', 'checked')
             return paths
         return None
