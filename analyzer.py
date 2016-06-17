@@ -131,8 +131,4 @@ class Analyzer(object):
 
         self.paths.append(self.path)
         self.results.append(self.result)
-        import IPython
-        shell = IPython.terminal.embed.InteractiveShellEmbed()
-        shell.mainloop(display_banner="\nDebug time!")
-        exit()
         return self.result
