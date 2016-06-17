@@ -9,9 +9,6 @@ class Verifier(object):
     CMDS = ['uname -a', 'id', 'whoami']
 
     def __init__(self, binary):
-        if '/' not in binary:
-            binary = './%s' % binary
-            l.warning('Change binary name to %s' % binary)
         self.binary = binary
         self.delay = 0.5
 

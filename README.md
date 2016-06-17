@@ -2,6 +2,13 @@ AEGG
 ----
 
 
+
+Dependences
+-----------
+
+- angr
+- pwntools
+
 Problems
 --------
 

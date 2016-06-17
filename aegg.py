@@ -9,11 +9,14 @@ l = logging.getLogger("aegg.aegg")
 
 class AEGG(object):
     def __init__(self, binary):
+        if '/' not in binary:
+            binary = './%s' % binary
+            l.warning('Change binary name to %s' % binary)
         self.binary = binary
         self.payloads = []
 
         self.bug_finder = BugFinder(binary)
-        self.analyzer = Analyzer()
+        self.analyzer = Analyzer(binary)
         self.exploiter = Exploiter()
         self.verifier = Verifier(binary)
 

@@ -1,4 +1,8 @@
 import logging
+from pwn import ELF
+from pwn import p32
+from pwn import p64
+import random
 
 l = logging.getLogger("aegg.analyzer")
 
@@ -6,7 +10,10 @@ l = logging.getLogger("aegg.analyzer")
 class Analyzer(object):
     MIN_BUF_SIZE = 20
 
-    def __init__(self):
+    def __init__(self, binary):
+        self.binary = binary
+        self.path = None
+        self.result = None
         self.paths = []
         self.results = []
 
@@ -14,9 +21,32 @@ class Analyzer(object):
         return {
             'arch': '',
             'ip_symbolic': False,
-            'ip_controled_name': '',
+            'ip_vars': [],
+            'padding': -1,
             'bufs': [],
+            'elf': {},
         }
+
+    def _get_padding(self):
+        state = self.path.state
+
+        if state.ip.op == 'Extract':
+            return state.ip.args[1] / 8
+        else:
+            l.warning('ip: %s..., ip.op != "extract"' % str(state.ip)[:50])
+            padding = set()
+            for _ in xrange(5):
+                test_value = random.getrandbits(state.arch.bits)
+                tmp = self.path.copy()
+                tmp.state.add_constraints(tmp.state.ip == test_value)
+                inp = tmp.state.posix.dumps(0)
+                if state.arch.bits == 32:
+                    padding.add(inp.find(p32(test_value)))
+                else:
+                    padding.add(inp.find(p64(test_value)))
+            if len(padding) != 1:
+                l.warning('Found multiple paddings: %s' % padding)
+            return padding.pop()
 
     def _fully_symbolic(self, state, variable):
         for i in range(state.arch.bits):
@@ -31,7 +61,8 @@ class Analyzer(object):
                 return address, i
             i += 1
 
-    def _get_bufs(self, state):
+    def _get_bufs(self):
+        state = self.path.state
         # TODO: check more simfiles
         stdin_file = state.posix.get_file(0)
 
@@ -47,24 +78,61 @@ class Analyzer(object):
                 bufs.append({'addr': addr, 'length': length})
         return bufs
 
-    def _analyze(self, path):
-        result = self._new_result()
-        state = path.state
-        result['arch'] = state.arch.name
-        result['ip_symbolic'] = self._fully_symbolic(state, state.ip)
+    def _binary_info(self):
+        """
+        pwntools source:
+            https://github.com/Gallopsled/pwntools/blob/master/pwnlib/elf/__init__.py#L652
+
+        RELRO:
+            - 'Full'
+            - 'Partial'
+            - None
+        Stack Canary:
+            - True
+            - False
+        NX:
+            - True
+            - False
+        PIE:
+            - True
+            - False
+        """
+        elf = ELF(self.binary)
+        self.result['elf'] = {
+            'RELRO': elf.relro,
+            'Canary': elf.canary,
+            'NX': elf.nx,
+            'PIE': elf.pie}
+
+    def _ip_symbolic_info(self):
+        state = self.path.state
+
+        self.result['ip_vars'] = list(state.ip.variables)
+        self.result['padding'] = self._get_padding()
+        self.result['bufs'] = self._get_bufs()
+        l.debug('Finding %d buffers.' % len(self.result['bufs']))
+
+    def _analyze(self):
+        state = self.path.state
+
+        self._binary_info()
+        self.result['arch'] = state.arch.name
+        self.result['ip_symbolic'] = self._fully_symbolic(state, state.ip)
+
         l.debug('Checking ip %s... symbolic: %s' %
-                (str(state.ip)[:50], result['ip_symbolic']))
-        if result['ip_symbolic']:
-            if state.ip.op == 'Extract':
-                result['ip_controled_name'] = state.ip.args[2].args[0]
-            else:
-                l.warning('ip: %s..., ip.op != "extract"' % str(state.ip)[:50])
-            result['bufs'] = self._get_bufs(state)
-            l.debug('Finding %d buffers.' % len(result['bufs']))
-        return result
+                (str(state.ip)[:50], self.result['ip_symbolic']))
+        if self.result['ip_symbolic']:
+            self._ip_symbolic_info()
 
     def analyze(self, path):
-        result = self._analyze(path)
-        self.paths.append(path)
-        self.results.append(result)
-        return result
+        self.path = path
+        self.result = self._new_result()
+        self._analyze()
+
+        self.paths.append(self.path)
+        self.results.append(self.result)
+        import IPython
+        shell = IPython.terminal.embed.InteractiveShellEmbed()
+        shell.mainloop(display_banner="\nDebug time!")
+        exit()
+        return self.result
