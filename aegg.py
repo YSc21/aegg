@@ -31,7 +31,9 @@ class AEGG(object):
                 break
             if self.verifier.verify(payload):
                 self.payloads.append(payload)
+                l.info('Generated!')
                 return True
+        l.info('Can not generate any payload.')
         return False
 
     def hack(self, n=None, paths=None):

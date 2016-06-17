@@ -36,4 +36,5 @@ class Verifier(object):
                     return True
             except Exception, e:
                 l.warning('Pwnlib Error: %s %s' % (Exception, e))
+        l.info('All cmds failed.')
         return False
