@@ -89,6 +89,8 @@ Reference
 ---------
 
 [angr-doc/examples/insomnihack_aeg](https://github.com/angr/angr-doc/blob/master/examples/insomnihack_aeg/)
+
 [(State of) The Art of War: Offensive Techniques in Binary Analysis](https://www.cs.ucsb.edu/~vigna/publications/2016_SP_angrSoK.pdf)
+
 [AEG: Automatic Exploit Generation](http://repository.cmu.edu/cgi/viewcontent.cgi?article=1239&context=ece)
 
