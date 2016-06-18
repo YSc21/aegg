@@ -5,13 +5,14 @@ import logging
 from verifier import Verifier
 
 l = logging.getLogger("aegg.aegg")
+l.setLevel('INFO')
 
 
 class AEGG(object):
     def __init__(self, binary):
         if '/' not in binary:
             binary = './%s' % binary
-            l.warning('Change binary name to %s' % binary)
+            l.info('Change binary name to %s' % binary)
         self.binary = binary
         self.payloads = []
 

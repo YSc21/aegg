@@ -35,17 +35,21 @@ class Analyzer(object):
         else:
             l.warning('ip: %s..., ip.op != "extract"' % str(state.ip)[:50])
             padding = set()
-            for _ in xrange(5):
-                test_value = random.getrandbits(state.arch.bits)
-                tmp = self.path.copy()
-                tmp.state.add_constraints(tmp.state.ip == test_value)
-                inp = tmp.state.posix.dumps(0)
-                if state.arch.bits == 32:
-                    padding.add(inp.find(p32(test_value)))
-                else:
-                    padding.add(inp.find(p64(test_value)))
-            if len(padding) != 1:
-                l.warning('Found multiple paddings: %s' % padding)
+            try:
+                for _ in xrange(5):
+                    test_value = random.getrandbits(state.arch.bits)
+                    tmp = self.path.copy()
+                    tmp.state.add_constraints(tmp.state.ip == test_value)
+                    inp = tmp.state.posix.dumps(0)
+                    if state.arch.bits == 32:
+                        padding.add(inp.find(p32(test_value)))
+                    else:
+                        padding.add(inp.find(p64(test_value)))
+                if len(padding) != 1:
+                    l.warning('Found multiple paddings: %s' % padding)
+            except:
+                l.warning('Can not find padding.')
+                padding.add(-1)
             return padding.pop()
 
     def _fully_symbolic(self, state, variable):
