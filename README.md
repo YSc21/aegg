@@ -8,46 +8,44 @@ Usage
 -----
 
 1. vi `vul.c`:
-```
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
+    ```
+    #include <stdio.h>
+    #include <unistd.h>
+    #include <string.h>
 
-char buf[100];
+    char buf[100];
 
-int sample_func() {
-    char name[10] = {0};
-    read(0, buf, 307);
-    strcpy(name, buf);
-    printf("input: %s\n", name);
-}
+    int sample_func() {
+        char name[10] = {0};
+        read(0, buf, 307);
+        strcpy(name, buf);
+        printf("input: %s\n", name);
+    }
 
-int main(void)
-{
-    printf("Running...\n");
-    sample_func();
-    printf("Done.\n");
-}
-```
-
+    int main(void)
+    {
+        printf("Running...\n");
+        sample_func();
+        printf("Done.\n");
+    }
+    ```
 2. complie `vul`:
-```
-gcc vul2.c -o vul2 -m32 -g -z execstack
-```
-
+    ```
+    gcc vul2.c -o vul2 -m32 -g -z execstack
+    ```
 3. vi `my_aegg.py`:
-```
-from aegg import AEGG
+    ```
+    from aegg import AEGG
 
-binary = './vul'
-gg = AEGG(binary)
+    binary = './vul'
+    gg = AEGG(binary)
 
-# generating payload!
-gg.hack()
+    # generating payload!
+    gg.hack()
 
-print repr(gg.payloads)
-gg.save()
-```
+    print repr(gg.payloads)
+    gg.save()
+    ```
 
 
 Result
@@ -56,6 +54,7 @@ Result
 ```
 $ python my_aegg.py
 ...
+INFO    | 2016-06-18 00:10:11,717 | aegg.aegg | Start hacking ...
 INFO    | 2016-06-17 23:44:43,872 | pwnlib.elf | Stack is executable!
 [+] Started program './vul'
 INFO    | 2016-06-17 23:44:46,974 | pwnlib.tubes.process | Started program './vul'
