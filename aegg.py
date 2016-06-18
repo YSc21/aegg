@@ -3,6 +3,7 @@ from bug_finder import BugFinder
 from exploiter import Exploiter
 import logging
 from verifier import Verifier
+import os
 
 l = logging.getLogger("aegg.aegg")
 l.setLevel('INFO')
@@ -10,16 +11,13 @@ l.setLevel('INFO')
 
 class AEGG(object):
     def __init__(self, binary):
-        if '/' not in binary:
-            binary = './%s' % binary
-            l.info('Change binary name to %s' % binary)
-        self.binary = binary
+        self.binary = os.path.abspath(binary)
         self.payloads = []
 
-        self.bug_finder = BugFinder(binary)
-        self.analyzer = Analyzer(binary)
-        self.exploiter = Exploiter()
-        self.verifier = Verifier(binary)
+        self.bug_finder = BugFinder(self.binary)
+        self.analyzer = Analyzer(self.binary)
+        self.exploiter = Exploiter(self.binary)
+        self.verifier = Verifier(self.binary)
 
     def _save(self, payload, file_name):
         with open(file_name, 'w') as f:

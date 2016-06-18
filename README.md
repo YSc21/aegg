@@ -82,7 +82,10 @@ Dependences
 TODO
 ----
 
+- ROP: leak_based, gadget_based
 - AEGG: inputs in exploit_gen instead of paths (for fuzzing)
+- ret2stack: try every buffer
+- fmtstr exploit
 
 
 Reference
