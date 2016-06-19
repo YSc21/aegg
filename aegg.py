@@ -56,7 +56,10 @@ class AEGG(object):
     def save(self, file_name=None):
         file_name = self.binary if file_name is None else file_name
         if len(self.payloads) == 1:
-            self._save(self.payloads[0], '%s.exp' % file_name)
+            ext = 'py' if self.payloads[0].ptype == 'script' else 'exp'
+            self._save(self.payloads[0].content, '%s.%s' % (file_name, ext))
         else:
             for i in xrange(len(self.payloads)):
-                self._save(self.payloads[i], '%s-%d.exp' % (file_name, i))
+                ext = 'py' if self.payloads[0].ptype == 'script' else 'exp'
+                self._save(self.payloads[i].content,
+                           '%s-%d.%s' % (file_name, i, ext))

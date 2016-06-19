@@ -1,8 +1,7 @@
 AEGG
 ----
 
-my automatic exploit generation
-
+AEGG is my simple automatic exploit generation tool. Now only support x86 binary.
 
 Usage
 -----
