@@ -81,11 +81,13 @@ Dependences
 TODO
 ----
 
-- class Payload
-- ROP: leak_based, gadget_based
-- AEGG: inputs in exploit_gen instead of paths (for fuzzing)
-- ret2stack: try every buffer
-- fmtstr exploit
+- [x] shellcode (ret2stack)
+- [x] ROP (ret2libc)
+- [ ] ROPgadget
+- [ ] fmtstr exploit
+
+- [ ] AEGG: inputs in exploit_gen instead of paths (for fuzzing)
+- [ ] ret2stack: try every buffer
 
 
 Reference
