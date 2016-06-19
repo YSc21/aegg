@@ -7,6 +7,7 @@ l = logging.getLogger("aegg.analyzer")
 
 
 class Analyzer(object):
+    LEAK_SYMBOLS = ['puts', 'printf']
     MIN_BUF_SIZE = 20
 
     def __init__(self, binary):
@@ -107,9 +108,15 @@ class Analyzer(object):
             'Canary': elf.canary,
             'NX': elf.nx,
             'PIE': elf.pie}
+
         ldd_output = commands.getoutput('ldd rop').split('\n')
         lib = filter(lambda lib: 'libc.so.6' in lib, ldd_output)[0]
         self.result['elf']['libc'] = re.findall('=> (.*) \(', lib)[0]
+
+        self.result['elf']['leak_symbol'] = []
+        for symbol in Analyzer.LEAK_SYMBOLS:
+            if symbol in elf.symbols:
+                self.result['elf']['leak_symbol'].append(symbol)
 
     def _ip_symbolic_info(self):
         state = self.path.state
