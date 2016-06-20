@@ -109,7 +109,7 @@ class Analyzer(object):
             'NX': elf.nx,
             'PIE': elf.pie}
 
-        ldd_output = commands.getoutput('ldd rop').split('\n')
+        ldd_output = commands.getoutput('ldd %s' % self.binary).split('\n')
         lib = filter(lambda lib: 'libc.so.6' in lib, ldd_output)[0]
         self.result['elf']['libc'] = re.findall('=> (.*) \(', lib)[0]
 
