@@ -42,7 +42,7 @@ Usage
     # generating payload!
     gg.hack()
 
-    print repr(gg.payloads)
+    print repr(gg.payloads[0].content)
     gg.save()
     ```
 
@@ -88,6 +88,7 @@ TODO
 
 - [ ] AEGG: inputs in exploit_gen instead of paths (for fuzzing)
 - [ ] ret2stack: try every buffer
+- [ ] ret2stack: nop-sled
 
 
 Reference
